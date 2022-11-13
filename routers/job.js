@@ -53,8 +53,8 @@ router.post(`/add`, async  (req,res) => {
 })
 
 router.get(`/get`, async (req, res) => {
-    if( await !check_permission(req.headers.authorization) )
-        return res.status(400).send( {status : "Access denied!"})
+//    if( await !check_permission(req.headers.authorization) )
+  //      return res.status(400).send( {status : "Access denied!"})
 
 
     connection.query('SELECT name,description,rate,size FROM jobs', (err, rows) => {
