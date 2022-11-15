@@ -60,11 +60,11 @@ router.post(`/addtype`, async  (req,res) => {
         if ( !err )
         {
             console.log(results)
-            return res.status(200).send( { status: 'success'} )
+            return res.status(200).send( { status: true, message: "new type added"} )
         }
         else
         { console.log(err)
-            return res.status(200).send( { status: err.sqlMessage } );
+            return res.status(200).send( { status: false, message:  err.sqlMessage } );
         }
     })
 })
@@ -78,7 +78,7 @@ router.get(`/:date`, async (req, res) => {
     //     if ( jwtvalues.type != 100) { //Admin user only register users
     //         return res.status(200).send( { status: 'Access Denied for non-Admin Users' } );
     //     }
-    if (req.params.date === "type" )
+   if (req.params.date === "type" )
     {
         connection.query('SELECT * FROM attendancetype', (err, rows) => {
             if (!err) {
@@ -89,7 +89,7 @@ router.get(`/:date`, async (req, res) => {
                                                       message: "no Attendance Type added yet!"})}
             } 
             else {
-                return res.status(400).send( {  success: false, message:'Failed to fetch Attendance type completed!'} );
+                return res.status(400).send( {  status: false, message:'Failed to fetch Attendance type completed!'} );
             }});    
     }else {
         connection.query('SELECT * FROM attendance WHERE date = ?',[req.params.date], (err, rows) => {
@@ -106,10 +106,31 @@ router.get(`/:date`, async (req, res) => {
         }
     })
     
+    router.put(`/amend`, async (req, res) => {
+        // const BearerToken= req.headers.authorization.split(" ")
+        // const token=BearerToken[1];
+        // jwtvalues = jwt.verify(token, secret);
+        // if ( jwtvalues.type!=100) 
+        //      return res.status(400).send( {status : "Access denied!"})    
+                    
+        let sql = "UPDATE attendancetype SET description='"+req.body.description+ "',name ='"+req.body.name+"' WHERE ID="+req.body.ID;
+    
+        connection.query(sql, req.body, (err, results) => {
+            if ( err ){
+                console.log(err);
+                return res.status(200).send( { status: false, message: err.sqlMessage});      
+            }
+            else
+            {
+                return res.status(200).send({status: true, message: 'Type details updated'})    
+            } 
+        })
+    })
+    
     
 
 
-router.delete(`/deletetype`, async  (req,res) => {
+router.delete(`/deletetype/:id`, async  (req,res) => {
 //    const BearerToken= req.headers.authorization.split(" ")
   //  const token=BearerToken[1];
 //    console.log(token)
@@ -119,7 +140,7 @@ router.delete(`/deletetype`, async  (req,res) => {
    //     return res.status(200).send( { status: 'Access Denied for non-Admin Users' } );
    // }
     
-    let sql = "DELETE FROM attendancetype WHERE ID='"+req.body.ID+"'";
+    let sql = "DELETE FROM attendancetype WHERE ID="+req.params.id;
 
     let query = connection.query(sql,(err, results) => {
         if (!err)
