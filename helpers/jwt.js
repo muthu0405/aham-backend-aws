@@ -12,7 +12,7 @@ function authJwt() {
             { url: /\/mk-api\/v1\/job(.*)/, methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']},//working
             { url: /\/mk-api\/v1\/attendance(.*)/, methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']},//working
             { url: /\/mk-api\/v1\/user(.*)/, methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']},//working
-//            { url: /\/mk-api\/v1\/user(.*)/, methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']},//working
+            { url: /\/mk-api\/v1\/employee(.*)/, methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']},//working
             { url: /\/mk-api\/v1\/password(.*)/, methods: ['GET', 'POST','PUT', 'DELETE', 'OPTIONS']},//working
             { url: /\/mk-api\/v1\/employee(.*)/, methods: ['GET',  'DELETE', 'OPTIONS']},//working
         ]                                                               //regex101.com

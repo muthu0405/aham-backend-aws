@@ -124,14 +124,14 @@ router.put(`/change`, async (req, res) => {
                 
                 myemail.emailto(options)
             
-                return res.status(200).send( {status : 'Password Changed Successfully' })
+                return res.status(200).send( {status :  true, message :'Password Changed Successfully' })
                } 
         });
     }
     catch(error)
     {
         console.log("caught "+ error)
-        return res.status(400).send( error)
+        return res.status(400).send( { status: false, message : error} )
     }         
 })
 

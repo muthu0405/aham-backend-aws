@@ -38,11 +38,11 @@ router.post(`/register`, async  (req,res) => {
         if ( !err )
         {
             console.log(results)
-            return res.status(200).send( { status: 'success'} )
+            return res.status(200).send( { status: true, message: "New User added!"} )
         }
         else
-        { console.log(err)
-            return res.status(200).send( { status: err.sqlMessage } );
+        { console.log(err);
+            return res.status(200).send( { status: false, message: err.sqlMessage } );
         }
     })
 })
@@ -131,18 +131,19 @@ router.get(`/get`, async (req, res) => {
    //     return res.status(200).send( { status: 'Access Denied for non-Admin Users' } );
    // }
 
-    connection.query('SELECT name, login, user_type, mobile, email, address1, address2, area, state FROM users', (err, rows) => {
+    connection.query('SELECT b.*, a.category FROM users as b INNER JOIN usercategory as a ON (b.user_type = a.ID);', (err, rows) => {
         if (!err) {
             if ( rows.length>0 )
             { return res.status(200).send( { status: true,
                                              users: rows})}
-            else { return res.status(200).send( { status: true,
+            else { return res.status(200).send( { status: false,
                                                   message: "no Users added yet!"})}
         } 
         else {
             return res.status(400).send( {  success: false, message:'Failed to fetch users!'} );
         }});
 })
+
 
 router.get(`/getcategory`, async (req, res) => {
     connection.query('SELECT * FROM usercategory', (err, rows) => {
@@ -159,14 +160,14 @@ router.get(`/getcategory`, async (req, res) => {
 })
 
 router.delete(`/delete`, async  (req,res) => {
-    const BearerToken= req.headers.authorization.split(" ")
-    const token=BearerToken[1];
-//    console.log(token)
-    jwtvalues = jwt.verify(token, secret);
+//     const BearerToken= req.headers.authorization.split(" ")
+//     const token=BearerToken[1];
+// //    console.log(token)
+//     jwtvalues = jwt.verify(token, secret);
 
-    if ( jwtvalues.type != 100) { //Admin user only register users
-        return res.status(200).send( { status: 'Access Denied for non-Admin Users' } );
-    }
+//     if ( jwtvalues.type != 100) { //Admin user only register users
+//         return res.status(200).send( { status: 'Access Denied for non-Admin Users' } );
+//     }
     
     let sql = "DELETE FROM users WHERE login='"+req.body.login+"'";
 
@@ -180,6 +181,28 @@ router.delete(`/delete`, async  (req,res) => {
     })
 })
 
+router.delete(`/:id`, async  (req,res) => {
+    //     const BearerToken= req.headers.authorization.split(" ")
+    //     const token=BearerToken[1];
+    // //    console.log(token)
+    //     jwtvalues = jwt.verify(token, secret);
+    
+    //     if ( jwtvalues.type != 100) { //Admin user only register users
+    //         return res.status(200).send( { status: 'Access Denied for non-Admin Users' } );
+    //     }
+        
+        let sql = "DELETE FROM users WHERE ID='"+req.params.id+"'";
+    
+        let query = connection.query(sql,(err, results) => {
+            if (!err)
+            {
+                return res.status(200).send( {status : true, message: results })
+            }
+            else
+                return res.status(400).send( { status : false, message: err.sqlMessage })
+        })
+    })
+    
 
 
 module.exports = router;

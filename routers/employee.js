@@ -18,14 +18,14 @@ let connection = mysql.createConnection( {
 
 
 router.post(`/add`, async  (req,res) => {
-    const BearerToken= req.headers.authorization.split(" ")
-    const token=BearerToken[1];
-//    console.log(token)
-    jwtvalues = jwt.verify(token, secret);
+//     const BearerToken= req.headers.authorization.split(" ")
+//     const token=BearerToken[1];
+// //    console.log(token)
+//     jwtvalues = jwt.verify(token, secret);
 
-    if ( jwtvalues.type != 100) { //Admin user only register users
-        return res.status(200).send( { status: 'Access Denied for non-Admin Users' } );
-    }
+//     if ( jwtvalues.type != 100) { //Admin user only register users
+//         return res.status(200).send( { status: 'Access Denied for non-Admin Users' } );
+//     }
 
     let sql = "INSERT INTO employees SET ?";
 
@@ -33,11 +33,11 @@ router.post(`/add`, async  (req,res) => {
         if ( !err )
         {
             console.log(results)
-            return res.status(200).send( { status: 'success'} )
+            return res.status(200).send( { status: true, message: "Employee Added Successfully"} )
         }
         else
         { console.log(err)
-            return res.status(200).send( { status: err.sqlMessage } );
+            return res.status(200).send( { status: false, message: err.sqlMessage } );
         }
     })
 })
@@ -100,7 +100,7 @@ router.get(`/get`, async (req, res) => {
    //     return res.status(200).send( { status: 'Access Denied for non-Admin Users' } );
    // }
 
-    connection.query('SELECT * FROM employees', (err, rows) => {
+    connection.query('select b.*, a.category FROM employees as b INNER JOIN employeecategory as a ON (b.type = a.ID);', (err, rows) => {
         if (!err) {
             if ( rows.length>0 )
             { return res.status(200).send( { status: true,
@@ -158,6 +158,29 @@ router.delete(`/delete`, async  (req,res) => {
     })
 })
 
+
+
+router.put(`/amendstatus`, async  (req,res) => {
+    //     const BearerToken= req.headers.authorization.split(" ")
+    //     const token=BearerToken[1];
+    // //    console.log(token)
+    //     jwtvalues = jwt.verify(token, secret);
+    
+    //     if ( jwtvalues.type != 100) { //Admin user only register users
+    //         return res.status(200).send( { status: 'Access Denied for non-Admin Users' } );
+    //     }
+        console.log("bdy"+req.body.ID)
+        let sql = "UPDATE employees SET type= 90 WHERE ID='"+req.body.ID +"'"    
+        let query = connection.query(sql,(err, results) => {
+            if (!err)
+            {
+                return res.status(200).send( {status : true, message: results })
+            }
+            else
+                return res.status(400).send( { status : false, message: err.sqlMessage })
+        })
+    })
+    
 
 
 module.exports = router;
